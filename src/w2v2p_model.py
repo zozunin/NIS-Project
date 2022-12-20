@@ -65,7 +65,7 @@ class data_reader(Dataset):
         self.tag = self.tag[self.rdn_idx]
         
         self.x = self.data[:-int(0.2*self.total_num)]
-        self.y = self.tag[:-int(0.2*self.total_num)] # все теги в строчку
+        self.y = self.tag[:-int(0.2*self.total_num)]
         self.vx = self.data[-int(0.2*self.total_num):]
         self.vy = self.tag[-int(0.2*self.total_num):]
 
@@ -82,7 +82,7 @@ class data_reader(Dataset):
         hashtag = tmp_y[0].strip()
         category = tmp_x[0].split('\\')[1]
         
-        category = category if category not in self.word2idx.keys() else category
+        category = 'UNK' if category not in self.word2idx.keys() else category
         widx = self.word2idx[category]
         category_vec = self.word_vec_dict[widx]
         
@@ -128,7 +128,7 @@ class word2vec_dataset(Dataset):
 class word2vec(nn.Module):
     def __init__(self, vol_size):
         super(word2vec, self).__init__()
-        self.embed = 500
+        self.embed = 300
         self.vol = vol_size
         self.u_embeddings = nn.Embedding(self.vol, self.embed)
         self.linear = nn.Linear(self.embed, self.vol)
@@ -145,7 +145,7 @@ filename = "full_tag_list.txt"
 
 mode = 'train'
 batch_size = 64
-epochs = 200
+epochs = 100
 lr = 0.0001
     
 data, word_counter, corpus, word2idx, idx2word = read_tags(folder_dir, filename)
@@ -219,7 +219,7 @@ class img2vec(nn.Module):
     def __init__(self):
         super(img2vec, self).__init__()
         self.linear1 = nn.Linear(2048, 1024)
-        self.linear2 = nn.Linear(1024, 500) 
+        self.linear2 = nn.Linear(1024, 300) 
     
     def forward(self, x):
         x = self.linear1(x)
